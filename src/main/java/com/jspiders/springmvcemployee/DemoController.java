@@ -1,0 +1,53 @@
+package com.jspiders.springmvcemployee;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller
+public class DemoController {
+    List<Employee> empList = new ArrayList<>();
+    {
+        empList.add(new Employee(1,"Swapnil",30000));
+        empList.add(new Employee(2,"Tushar",35000));
+        empList.add(new Employee(3,"Sachin",40000));
+    }
+    @GetMapping("/")
+    public String getEmployee(Model model){
+        model.addAttribute("empdata",empList);
+        return "landing";
+    }
+    @GetMapping("/addnewemployee")
+    public String getEmpForm(Model model){
+        model.addAttribute("employee",new Employee());
+        return "addnewemployee";
+    }
+    @PostMapping("/saveemployee")
+    public String insertEmployee(Employee employee){
+        empList.add(employee);
+        return "redirect:/";
+    }
+
+    @GetMapping("/updateemployee/{id}")
+    public String showUpdateForm(@PathVariable (value = "id") int id,Model model){
+        Employee e = empList.get(id-1);
+        model.addAttribute("employee",e);
+        return "empupdateform";
+    }
+    @GetMapping("/modifyemployee")
+    public String changeEmp(Employee e){
+        empList.set(e.getEmpId()-1,e);
+        return "redirect:/";
+    }
+    @GetMapping("/deleteemployee/{id}")
+    public String deleteEmp(@PathVariable(value = "id")int id,Model model){
+        Employee e = empList.get(id-1);
+        empList.remove(e);
+        return "redirect:/";
+    }
+}
